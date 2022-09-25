@@ -1,4 +1,4 @@
-package proyecto1.presentation.empleados;
+package proyecto1.presentation.sucursales;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,12 +15,14 @@ public class View implements Observer {
     private JTextField nombreFld;
     private JButton buscarFld;
     private JButton agregarFld;
-    private JTable empleadosFld;
+    private JTable sucursalesFld;
     private JLabel nombreLbl;
+    private JLabel labelMap;
     private JButton borrarFld;
     private JButton reporteFld;
 
     public View() {
+        // setMapa();
         buscarFld.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -34,11 +36,11 @@ public class View implements Observer {
                 controller.preAgregar();
             }
         });
-        empleadosFld.addMouseListener(new MouseAdapter() {
+        sucursalesFld.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int row = empleadosFld.getSelectedRow();
+                    int row = sucursalesFld.getSelectedRow();
                     controller.editar(row);
                 }
             }
@@ -46,7 +48,7 @@ public class View implements Observer {
         borrarFld.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = empleadosFld.getSelectedRow();
+                int row = sucursalesFld.getSelectedRow();
                 controller.borrar(row);
             }
         });
@@ -57,12 +59,18 @@ public class View implements Observer {
                 try {
                     controller.imprimir();
                     if (Desktop.isDesktopSupported()) {
-                        File myFile = new File("empleados.pdf");
+                        File myFile = new File("sucursales.pdf");
                         Desktop.getDesktop().open(myFile);
                     }
                 } catch (Exception ex) { }
             }
         });
+    }
+    void setMapa() {
+
+        labelMap.setSize(100, 100);
+        ImageIcon icon = new ImageIcon("C:\\Users\\50683\\Desktop\\I CICLO 2022\\II CICLO 2022\\Programacion III\\icons\\mapa.png");
+        labelMap.setIcon(icon);
 
     }
 
@@ -84,9 +92,9 @@ public class View implements Observer {
 
     @Override
     public void update(Observable updatedModel, Object parametros) {
-        int[] cols = {TableModel.CEDULA, TableModel.NOMBRE, TableModel.TELEFONO, TableModel.SALARIO, TableModel.SUCURSAL, TableModel.ZONAJE, TableModel.SALTOTAL};
-        empleadosFld.setModel(new TableModel(cols, model.getEmpleados()));
-        empleadosFld.setRowHeight(30);
+        int[] cols = {TableModel.CODIGO, TableModel.REFERENCIA, TableModel.DIRECCION, TableModel.ZONAJE};
+        sucursalesFld.setModel(new TableModel(cols, model.getSucursales()));
+        sucursalesFld.setRowHeight(30);
         this.panel.revalidate();
     }
 

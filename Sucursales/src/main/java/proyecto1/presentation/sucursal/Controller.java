@@ -1,7 +1,7 @@
-package proyecto1.presentation.empleado;
+package proyecto1.presentation.sucursal;
 
 import proyecto1.Application;
-import proyecto1.logic.Empleado;
+import proyecto1.logic.Sucursal;
 import proyecto1.logic.Service;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ public class Controller {
     Model model;
 
     public Controller(View view, Model model) {
-        model.setCurrent(new Empleado());
+        model.setCurrent(new Sucursal());
 
         this.view = view;
         this.model = model;
@@ -22,14 +22,14 @@ public class Controller {
 
     public void preAgregar(){
         model.setModo(Application.MODO_AGREGAR);
-        model.setCurrent(new Empleado());
+        model.setCurrent(new Sucursal());
         model.commit();
         this.show();
     }
 
     JDialog dialog;
     public void show(){
-        dialog = new JDialog(Application.window,"Empleado", true);
+        dialog = new JDialog(Application.window,"Sucursal", true);
         dialog.setSize(800,500);
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dialog.setContentPane(view.getPanel());
@@ -39,7 +39,7 @@ public class Controller {
     }
 
     public void hide(){
-      dialog.dispose();
+        dialog.dispose();
     }
 
     public void show1(){
@@ -50,22 +50,22 @@ public class Controller {
         Application.mainController.show();
     }
 
-    public void guardar(Empleado e) throws Exception {
+    public void guardar(Sucursal e) throws Exception {
         switch (model.getModo()) {
             case Application.MODO_AGREGAR:
-                Service.instance().empleadoAdd(e);
-                model.setCurrent(new Empleado());
+                Service.instance().sucursalAdd(e);
+                model.setCurrent(new Sucursal());
                 break;
             case Application.MODO_EDITAR:
-                Service.instance().empleadoUpdate(e);
+                Service.instance().sucursalUpdate(e);
                 model.setCurrent(e);
                 break;
         }
-        Application.empleadosController.buscar("");
+        Application.sucursalesController.buscar("");
         model.commit();
     }
 
-    public void editar(Empleado e){
+    public void editar(Sucursal e){
         model.setModo(Application.MODO_EDITAR);
         model.setCurrent(e);
         model.commit();

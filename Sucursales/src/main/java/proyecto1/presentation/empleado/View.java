@@ -67,8 +67,10 @@ public class View implements Observer {
         this.cedulaFld.setEnabled(model.getModo() == Application.MODO_AGREGAR);
         this.cedulaFld.setText(current.getCedula());
         this.nombreFld.setText(current.getNombre());
-        this.salarioFld.setText(String.valueOf(current.getSalario()));
         this.telefonoFld.setText(current.getTelefono());
+        this.salarioFld.setText(String.valueOf(current.getSalario()));
+        //this.sucursalFld.setText(current.getSucursal());
+        //Arreglar sucursal nula...
         this.panel.validate();
     }
 
@@ -79,7 +81,6 @@ public class View implements Observer {
         e.setTelefono(telefonoFld.getText());
         e.setSalario(Double.valueOf(salarioFld.getText()));
         //e.setSucursal(sucursalFld.getText());
-        //Falta poner la sucursal.
         return e;
     }
 
@@ -121,7 +122,6 @@ public class View implements Observer {
             salarioLbl.setToolTipText(null);
         }
 
-        /*
         if (sucursalFld.getText().length() == 0) {
             valid = false;
             sucursalLbl.setBorder(Application.BORDER_ERROR);
@@ -130,7 +130,7 @@ public class View implements Observer {
             sucursalLbl.setBorder(null);
             sucursalLbl.setToolTipText(null);
         }
-        */
+
 
         return valid;
     }

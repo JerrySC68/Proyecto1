@@ -1,23 +1,24 @@
-package proyecto1.presentation.empleados;
+package proyecto1.presentation.sucursales;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.VerticalAlignment;
 import proyecto1.Application;
 import proyecto1.logic.Empleado;
+import proyecto1.logic.Sucursal;
 import proyecto1.logic.Service;
 
 import java.util.List;
@@ -27,48 +28,48 @@ public class Controller {
     Model model;
 
     public Controller(View view, Model model) {
-        model.setEmpleados(Service.instance().empleadosSearch(""));
+        model.setSucursals(Service.instance().sucursalesSearch(""));
         this.view = view;
         this.model = model;
         view.setController(this);
         view.setModel(model);
     }
 
-    public void buscar(String filtro){
-        List<Empleado> rows = Service.instance().empleadosSearch(filtro);
-        model.setEmpleados(rows);
-        model.commit();
-    }
 
     public void preAgregar(){
-        Application.empleadoController.preAgregar();
+        Application.sucursalController.preAgregar();
     }
 
     public void editar(int row){
-        String cedula = model.getEmpleados().get(row).getCedula();
-        Empleado e=null;
+        String codigo = model.getSucursales().get(row).getCodigo();
+        Sucursal e=null;
         try {
-            e= Service.instance().empleadoGet(cedula);
-            Application.empleadoController.editar(e);
+            e= Service.instance().sucursalGet(codigo);
+            Application.sucursalController.editar(e);
         } catch (Exception ex) {}
     }
 
     public void borrar(int row){
-        String cedula = model.getEmpleados().get(row).getCedula();
-        Empleado e=null;
+        String codigo = model.getSucursales().get(row).getCodigo();
+        Sucursal e=null;
         try {
-            e= Service.instance().empleadoGet(cedula);
-            Service.instance().empleadoDelete(e);
+            e= Service.instance().sucursalGet(codigo);
+            Service.instance().sucursalDelete(e);
             this.buscar("");
         } catch (Exception ex) {}
     }
 
+    public void buscar(String filtro){
+        List<Sucursal> rows = Service.instance().sucursalesSearch(filtro);
+        model.setSucursals(rows);
+        model.commit();
+    }
 
     public void show(){
         Application.window.setContentPane(view.getPanel());
     }
 
-    private Cell getCell( Paragraph paragraph,TextAlignment alignment,boolean hasBorder) {
+    private Cell getCell(Paragraph paragraph, TextAlignment alignment, boolean hasBorder) {
         Cell cell = new Cell().add(paragraph);
         cell.setPadding(0);
         cell.setTextAlignment(alignment);
@@ -76,7 +77,7 @@ public class Controller {
         return cell;
     }
 
-    private Cell getCell( Image image,HorizontalAlignment alignment,boolean hasBorder) {
+    private Cell getCell(Image image, HorizontalAlignment alignment, boolean hasBorder) {
         Cell cell = new Cell().add(image);
         image.setHorizontalAlignment(alignment);
         cell.setPadding(0);
@@ -84,8 +85,12 @@ public class Controller {
         return cell;
     }
 
+    /*String codigo;
+    String refencia;
+    String direccion;
+    double zonaje;*/
     public void imprimir()throws Exception{
-        String dest="empleados.pdf";
+        String dest="sucursales.pdf";
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         PdfWriter writer = new PdfWriter(dest);
         PdfDocument pdf = new PdfDocument(writer);
@@ -105,25 +110,19 @@ public class Controller {
 
         Color bkg = ColorConstants.RED;
         Color frg= ColorConstants.WHITE;
-        Table body = new Table(7);
+        Table body = new Table(4);
         body.setWidth(500);
         body.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        body.addCell(getCell(new Paragraph("Cedula").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
-        body.addCell(getCell(new Paragraph("Nombre").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
-        body.addCell(getCell(new Paragraph("TELEFONO").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
-        body.addCell(getCell(new Paragraph("SALARIO").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
-        body.addCell(getCell(new Paragraph("SUCURSAL").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
+        body.addCell(getCell(new Paragraph("CODIGO").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
+        body.addCell(getCell(new Paragraph("REFERENCIA").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
+        body.addCell(getCell(new Paragraph("DIRECCION").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
         body.addCell(getCell(new Paragraph("ZONAJE").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
-        body.addCell(getCell(new Paragraph("SALTOTAL").setBackgroundColor(bkg).setFontColor(frg),TextAlignment.CENTER,true));
 
-        for(Empleado e: model.getEmpleados()){
-            body.addCell(getCell(new Paragraph(e.getCedula()),TextAlignment.CENTER,true));
-            body.addCell(getCell(new Paragraph(e.getNombre()),TextAlignment.CENTER,true));
-            body.addCell(getCell(new Paragraph(e.getTelefono()),TextAlignment.CENTER,true));
-            body.addCell(getCell(new Paragraph(String.valueOf(e.getSalario())),TextAlignment.CENTER,true));
-            //body.addCell(getCell(new Paragraph(e.getSucursal().getRefencia()),TextAlignment.CENTER,true));
-            //body.addCell(getCell(new Paragraph(String.valueOf(e.getZonaje())),TextAlignment.CENTER,true));
-            //body.addCell(getCell(new Paragraph(String.valueOf(e.getSalarioTotal())),TextAlignment.CENTER,true));
+        for(Sucursal e: model.getSucursales()){
+            body.addCell(getCell(new Paragraph(e.getCodigo()),TextAlignment.CENTER,true));
+            body.addCell(getCell(new Paragraph(e.getRefencia()),TextAlignment.CENTER,true));
+            body.addCell(getCell(new Paragraph(e.getDireccion()),TextAlignment.CENTER,true));
+            body.addCell(getCell(new Paragraph(String.valueOf(e.getZonaje())),TextAlignment.CENTER,true));
         }
         document.add(body);
         document.close();
